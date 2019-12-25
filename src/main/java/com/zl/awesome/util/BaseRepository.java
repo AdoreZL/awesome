@@ -1,4 +1,4 @@
-package com.boot.placms.util;
+package com.zl.awesome.util;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
