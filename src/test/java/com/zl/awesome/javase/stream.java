@@ -16,9 +16,9 @@ public class stream {
         sourceList.add("2");
         sourceList.add("3");
         List<String> targetList=new ArrayList<>();
+        targetList.add("2");
         targetList.add("3");
         targetList.add("4");
-        targetList.add("2");
         targetList.add("5");
 
         //求与目标List的交集
@@ -32,7 +32,5 @@ public class stream {
         //求与原list的差集
         List<String> waitInsert = targetList.stream().filter(target -> !sourceList.contains(target)).collect(Collectors.toList());
         System.out.println("waitInsert" + waitInsert.toString());
-
-
     }
 }
