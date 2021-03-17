@@ -27,8 +27,6 @@ import java.util.List;
 @SpringBootTest
 @Slf4j
 public class AwesomeApplicationTests {
-
-
     @Autowired
     private SingerService singerService;
 
@@ -62,7 +60,7 @@ public class AwesomeApplicationTests {
                 "            {\n" +
                 "                \"author\": \"itguang\",\n" +
                 "                \"price\": 12.99,\n" +
-                "                \"category\": \"编程语言\",\n" +
+                "                \"c    ategory\": \"编程语言\",\n" +
                 "                \"title\": \"go语言实战\"\n" +
                 "            }\n" +
                 "        ]\n" +
