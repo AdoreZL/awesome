@@ -2,7 +2,6 @@ package com.zl.awesome.javase;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * @author: netposa

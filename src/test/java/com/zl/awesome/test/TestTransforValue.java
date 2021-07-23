@@ -1,5 +1,7 @@
 package com.zl.awesome.test;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author: netposa
  * @Date: 2021/3/17 15:15
@@ -17,17 +19,18 @@ public class TestTransforValue {
     }
 
     public static void main(String[] args) {
-        TestTransforValue test = new TestTransforValue();
-        int age =20;
-        test.changeValue1(age);
-        System.out.println("age----"+age);
-
-        Person person = new Person("abc");
-        test.changeValue2(person);
-        System.out.println("personName---"+person.getPersonName());
-
-        String str ="abc";
-        test.changeValue3(str);
-        System.out.println("String---"+str);
+        System.out.println(StringUtils.isNotBlank(null));
+//        TestTransforValue test = new TestTransforValue();
+//        int age =20;
+//        test.changeValue1(age);
+//        System.out.println("age----"+age);
+//
+//        Person person = new Person("abc");
+//        test.changeValue2(person);
+//        System.out.println("personName---"+person.getPersonName());
+//
+//        String str ="abc";
+//        test.changeValue3(str);
+//        System.out.println("String---"+str);
     }
 }

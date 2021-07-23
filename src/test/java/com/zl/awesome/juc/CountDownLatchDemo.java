@@ -11,15 +11,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class CountDownLatchDemo {
     public static void main(String[] args) throws Exception{
-        CountDownLatch countDownLatch = new CountDownLatch(6);
-        for (int i = 0; i <=500; i++) {
+        //CountDownLatch的数值必须要和循环的次数一致
+        CountDownLatch countDownLatch = new CountDownLatch(4);
+        for (int i = 0; i <4; i++) {
 //            final int tempInt = i;
             new Thread(() ->{ System.out.println(Thread.currentThread().getName()+"\t 上完自习，离开教室");
                 countDownLatch.countDown();
                 },String.valueOf(i)).start();
         }
         //此时线程位main的主线程需要等待循环中的线程走完,,,或者在时间流逝之内等待countDown线程
-        countDownLatch.await(1,TimeUnit.NANOSECONDS);
+        countDownLatch.await();
         System.out.println(Thread.currentThread().getName()+"\t *********88班长最后关门走人");
     }
 }

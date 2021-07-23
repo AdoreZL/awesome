@@ -6,7 +6,7 @@ package com.zl.awesome.pattern.singleton.lazy;
  * @Description:
  */
 public class LazyDoubleCheckSingleton {
-    private volatile static LazyDoubleCheckSingleton lazyDoubleCheckSingleton = null;
+    private  static volatile  LazyDoubleCheckSingleton lazyDoubleCheckSingleton = null;
 
     private LazyDoubleCheckSingleton() {
     }

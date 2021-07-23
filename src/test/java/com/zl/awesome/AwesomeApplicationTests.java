@@ -7,28 +7,107 @@ import com.zl.awesome.annotation.autoprimay.SingerService;
 import com.zl.awesome.annotation.resouce.X;
 import com.zl.awesome.copy.Student;
 import com.zl.awesome.copy.Subject;
+import com.zl.awesome.modal.vo.UserTest;
+import com.zl.awesome.optional.Dog;
+import com.zl.awesome.optional.Zoo;
 import com.zl.awesome.transbean.Course;
 import com.zl.awesome.transbean.StudentDO;
 import com.zl.awesome.transbean.StudentDTO;
+import com.zl.awesome.util.NameUtil;
+import com.zl.awesome.util.UpLoadFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.awt.print.Book;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
+@EnableAutoConfiguration
 public class AwesomeApplicationTests {
     @Autowired
     private SingerService singerService;
+    @Autowired
+     JdbcTemplate jdbcTemplate;
+
+    List<UserTest> list;
+
+    private static final int USER_COUNT = 1000000; // 数量过大可能导致内存溢出，多运行几次
+
+    @Test
+    public void testInsert() {
+        long start = System.currentTimeMillis();
+        list = new ArrayList<>();
+        for (int i=1; i< USER_COUNT+1; i++){
+            UserTest user = new UserTest();
+            user.setId(i);
+            user.setName(NameUtil.getRandomName(i));
+            user.setGender(((int)(10 * Math.random())) % 2  );
+            String phone = getTel();
+            user.setPhone(phone);
+            list.add(user);
+        }
+
+        save(list);
+        long end = System.currentTimeMillis();
+        System.out.println("批量插入"+USER_COUNT+"条用户数据完毕，总耗时：" + (end - start) + " 毫秒");
+
+    }
+
+    /**
+     * 必须要在数据库连接url加上 &rewriteBatchedStatements=true 来开启批处理，否则还是一条一条写入的
+     * 检查IP地址
+     * @param list
+     */
+    public void save(List<UserTest> list) {
+        final List<UserTest> tempList = list;
+        String sql = "insert into user_innodb(id, name, gender, phone) "
+                + "values(?, ?, ?, ?)";
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(java.sql.PreparedStatement ps, int i) throws SQLException {
+                Integer id = tempList.get(i).getId();
+                String name =  tempList.get(i).getName();
+                Integer gender = tempList.get(i).getGender();
+                String phone = tempList.get(i).getPhone();
+
+                ps.setInt(1, id);
+                ps.setString(2, name);
+                ps.setInt(3, gender);
+                ps.setString(4, phone);
+            }
+
+            public int getBatchSize() {
+                return tempList.size();
+            }
+        });
+
+    }
+
+    public static int getNum(int start,int end) {
+        return (int)(Math.random()*(end-start+1)+start);
+    }
+
+    private static String[] telFirst="181,185,136,137,138,179,150,151,152,157,158,159,130,131,132,155,156,199,153,189,166".split(",");
+    private static String getTel() {
+        int index=getNum(0,telFirst.length-1);
+        String first=telFirst[index];
+        String second=String.valueOf(getNum(1,888)+10000).substring(1);
+        String third=String.valueOf(getNum(1,9100)+10000).substring(1);
+        return first+second+third;
+    }
 
     @Autowired
     private X x;
@@ -125,7 +204,7 @@ public class AwesomeApplicationTests {
 
         StudentDO studentDO = new StudentDO();
         //Spring的beanUtils(字段名不一致，属性无法复制,,,类型不一致，属性无法复制。但是注意，如果类型为基本类型以及基本类型的包装类，这种可以转化,,,嵌套对象字段，将会与源对象使用同一对象，即使用浅拷贝)
-        BeanUtils.copyProperties(studentDTO,studentDO);
+//        BeanUtils.copyProperties(studentDTO,studentDO);
 
         //Cglib BeanCopier()
 //        BeanCopier beanCopier = BeanCopier.create(StudentDTO.class, StudentDO.class, false);
@@ -135,13 +214,13 @@ public class AwesomeApplicationTests {
         //基本类型与包装类型
         //基本类型的包装类型与 String
         //深拷贝
-//        studentDO=StudentMapper.INSTANCE.dtoToDo(studentDTO);
-//        System.out.println(studentDO.toString());
+//        studentDO= StudentMapper.INSTANCE.dtoToDo(studentDTO);
+        System.out.println(studentDO.toString());
     }
 
 
     @Test
-    public void shallowCopy() throws CloneNotSupportedException {
+    public void shallowCopy() {
         Subject subject = new Subject("yuwen");
         Student studentA = new Student();
         studentA.setSubject(subject);
@@ -155,6 +234,22 @@ public class AwesomeApplicationTests {
         System.out.println("studentA:" + studentA.toString());
         System.out.println("studentB:" + studentB.toString());
     }
+
+    //*************************************************************optional开始***************************************************************
+    public void testOptional(){
+        Zoo zoo = new Zoo();
+        Dog dog = zoo.getDog();
+        if(dog != null){
+            int age = dog.getAge();
+            System.out.println(age);
+        }
+        Optional.of(zoo).map(Zoo::getDog).map(Dog::getAge).ifPresent(System.out::println);
+    }
+
+//    @Test
+//    public void upload(){
+//        UpLoadFileUtil.UploadFileByHttpClient()
+//    }
 }
 
 
